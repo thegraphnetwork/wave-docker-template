@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "h2o-wave-template"
+version = "0.1.0"
+description = "Dashboard quickstart template"
+authors = ["Flávio Codeço Coelho <fccoelho@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+h2o-wave = "^0.23.1"
+pandas = "^1.5.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "*"
+coverage = "^6.5.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
