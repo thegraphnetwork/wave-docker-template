@@ -9,10 +9,16 @@ license = "MIT"
 python = "^3.10"
 h2o-wave = "^0.23.1"
 pandas = "^1.5.0"
+psutil = "^5.9.2"
+loguru = "^0.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
 coverage = "^6.5.0"
+nox = "^2022.8.7"
+nox-poetry = "^1.0.1"
+autoflake8 = "^0.4.0"
+black = "^22.10.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
