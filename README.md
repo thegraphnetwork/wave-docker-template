@@ -1,7 +1,7 @@
 # Wave-docker-template
 Template repository to create a dockerized H2O Wave application from scratch.
 
-If you want to create Streamlit application, select this repo as a templated when creating your app's repository.
+If you want to create a Wave application, select this repo as a templated when creating your app's repository.
 
 ### Run with docker-compose :
 
