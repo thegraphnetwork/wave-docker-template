@@ -1,0 +1,10 @@
+name: waveapp
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - docker-compose
+  - make
+  - poetry
+  # - podman
+  # - podman-compose

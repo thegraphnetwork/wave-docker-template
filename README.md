@@ -1,63 +1,73 @@
-# Wave-docker-template
+## Wave-docker-template
 Template repository to create a dockerized H2O Wave application from scratch.
 
 If you want to create a Wave application, select this repo as a templated when creating your app's repository.
 
-### Run with docker-compose :
+### Run on virtual environment with poetry:
 
 **Pre-requisites**
-* Docker installed and running
-* docker-compose installed
 
-```bash
-$ docker-compose up
+- pip
+- poetry
 
-# When dependencies change and you need to force a rebuild
-$ docker-compose up --build
-
-# When finished
-$ docker-compose down
 ```
-
-
-### Run with virtualenv:
-
-**Pre-requisites**
-* pip
-* poetry
-
-```bash
-# Installing dependencies and activating the virtualenv
-
+# Installing dependencies
+$ poetry config virtualenvs.create true
 $ poetry install
 $ poetry shell
 
-$ wave run app.py
+$ wave run app/app.py
 ```
 
-### Run with docker:
+You can see the app through localhost http://127.0.0.1:10101
+
+To stop running Press Ctrl + C
+
+To stop virtual env 
+```
+$ exit
+```
+
+### Run on virutal environment with Conda
+
+**Pre-requisites**
+
+- mamba or conda
+
+```
+$ mamba env create --file conda/local.yaml
+```
+You can use conda instead of mamba `$ conda env create --file conda/env.yml`
+
+To activate virutal env and run the app
+
+```
+$ conda activate waveapp
+
+$ wave run app/app.py
+```
+
+You can see the app through localhost http://127.0.0.1:10101
+
+### Run with docker-compose :
+
+**Pre-requisites**
+
 * Docker installed and running
-
+* Install make docker-compose with:
 ```bash
-# First build
-$ docker build -t wave-app:latest .
-
-# Subsequent builds
-$ docker build --cache-from wave-app:latest -t wave-app:latest .
-
-# To run as docker container with default streamlit port
-$ docker run -p 8501:8501 wave-app:latest
+$ mamba env create --file conda/containers.yaml
 ```
 
-You can open the app at http://localhost:10101/monitor
-
-
-### Further developing your application
-We recommend developing the app using the virtualenv instructions above. This way you can add dependencies like this:
-
+Then:
 ```bash
-# Adding pandas as a dependency
-$ poetry add pandas
+$ make containers-build
+
+# When dependencies change and you need to force a rebuild
+$ make containers-start
+
+# When finished
+$ make containers-down
 ```
 
-Then poetry will update your pyproject.toml so that no change to the Dockerfile is necessary.
+You can see the app through localhost http://127.0.0.1:10101

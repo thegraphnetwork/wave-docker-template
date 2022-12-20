@@ -1,0 +1,35 @@
+name: main
+on: [push, pull_request]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          mamba-version: "*"
+          environment-file: conda/local.yaml
+          channels: conda-forge,nodefaults
+          activate-environment: waveapp
+          use-mamba: true
+          miniforge-variant: Mambaforge
+
+      - name: install from poetry
+        run: poetry install
+
+      - name: check dir
+        run: |
+          pwd
+          ls -la
+
+      - name: run wave app
+        run: |
+          wave run app/app.py &
+          sleep 5 &
+          kill %%
