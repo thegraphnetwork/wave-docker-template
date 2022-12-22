@@ -25,16 +25,10 @@ jobs:
           curl -sSL https://install.python-poetry.org/ | python -
           export PATH="$HOME/.poetry/bin:$PATH"
 
-      - name: install from poetry
+      - name: Install from poetry
         run: poetry config virtualenvs.create true && poetry install
 
-      - name: check dir
-        run: |
-          pwd
-          ls -la
-
-      - name: run wave app
+      - name: Run wave app
         run: |
           wave run app/app.py &
-          sleep 5 &
-          kill %%
+          timeout 30 curl -X GET http://127.0.0.1:10101

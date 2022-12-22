@@ -28,7 +28,7 @@ To stop virtual env
 $ exit
 ```
 
-### Run on virutal environment with Conda
+### Run on virtual environment with Conda
 
 **Pre-requisites**
 
@@ -39,7 +39,7 @@ $ mamba env create --file conda/local.yaml
 ```
 You can use conda instead of mamba `$ conda env create --file conda/env.yml`
 
-To activate virutal env and run the app
+To activate virtual env and run the app
 
 ```
 $ conda activate waveapp
