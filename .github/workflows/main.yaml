@@ -28,7 +28,11 @@ jobs:
       - name: Install from poetry
         run: poetry config virtualenvs.create true && poetry install
 
+      - name: Starting backend
+        run: bash scripts/ci/backend.sh > /dev/null 2>&1 &
+
       - name: Run wave app
         run: |
-          wave run app/app.py &
-          timeout 30 curl -X GET http://127.0.0.1:10101
+          sleep 5 && curl -i http://localhost:10101 2>/dev/null | head -n 1 | cut -d$' ' -f2
+
+          
