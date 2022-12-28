@@ -49,7 +49,7 @@ containers-logs-follow:
 
 .PHONY: containers-wait
 containers-wait:
-	timeout ${TIMEOUT} ./containers/healthcheck.sh ${SERVICE}
+	timeout ${TIMEOUT} ./scripts/ci/healthcheck.sh ${SERVICE}
 
 
 .PHONY:containers-exec
