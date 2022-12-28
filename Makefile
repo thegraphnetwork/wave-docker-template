@@ -5,6 +5,13 @@ CMD:=
 ARGS:=
 TIMEOUT:=90
 
+
+#  APP ON CI
+.PHONY: app-wait
+app-wait:
+	timeout ${TIMEOUT} ./scripts/ci/status_code_check.sh
+
+
 # https://github.com/containers/podman-compose/issues/491#issuecomment-1289944841
 CONTAINER_APP=docker-compose \
 	--env-file=.env \
