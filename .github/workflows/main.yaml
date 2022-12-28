@@ -34,9 +34,4 @@ jobs:
       - name: Run wave app
         run: |
           sleep 5 && curl -i http://localhost:10101 2>/dev/null | head -n 1 | cut -d$' ' -f2
-
-      - name: Setup tmate session
-        if: "${{ failure() }}"
-        uses: mxschmitt/action-tmate@v3
-
-          
+        

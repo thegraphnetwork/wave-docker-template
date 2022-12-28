@@ -5,5 +5,5 @@ set -e
 
 ENV_NAME=waveapp
 
-source /home/esloch/mambaforge/bin/activate "$ENV_NAME" && \
+source /usr/share/miniconda3/bin/activate "$ENV_NAME" && \
 wave run app/app.py
