@@ -67,4 +67,5 @@ RUN chmod +x /opt/entrypoint.sh \
   && echo "source /opt/entrypoint.sh" > ~/.bashrc
 
 ENTRYPOINT ["tini", "--", "/opt/entrypoint.sh"]
-CMD ["wave run app/app.py"]
+
+#CMD ["wave run --no-reload --no-autostart app.app"]

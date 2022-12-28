@@ -16,7 +16,7 @@ $ poetry config virtualenvs.create true
 $ poetry install
 $ poetry shell
 
-$ wave run app/app.py
+$ wave run --no-reload --no-autostart app.app
 ```
 
 You can see the app through localhost http://127.0.0.1:10101
