@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-echo "[I] Checking response status code from App..."
+STATUS_CODE=''
 
-while [ "`curl -i http://localhost:10101 2>/dev/null | head -n 1 | cut -d$' ' -f2`" != 200 ];
+echo "[II] Checking response status code from App..."
+
+while [ "${STATUS_CODE}" != '200' ];
 do
     echo "[II] Waiting for Curl..."
+    STATUS_CODE=`curl -i http://localhost:10101 2>/dev/null | head -n 1 | cut -d$' ' -f2`
     sleep 5;
 done
 
-echo "[III] The WaveApp is 200 OK!."
+echo "[II] The status code is ${STATUS_CODE} OK!"
