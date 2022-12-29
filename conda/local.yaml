@@ -1,0 +1,11 @@
+name: waveapp
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - loguru
+  - pip
+  - psutil
+  - python
+  - pip:
+    - h2o-wave

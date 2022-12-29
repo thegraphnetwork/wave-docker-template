@@ -1,0 +1,35 @@
+name: main
+on: [push, pull_request]
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          miniconda-version: "latest"
+          mamba-version: "*"
+          environment-file: conda/local.yaml
+          channels: conda-forge,nodefaults
+          activate-environment: waveapp
+          use-mamba: true
+          miniforge-variant: Mambaforge
+
+      - name: Install dependencies
+        run: |
+          curl -sSL https://install.python-poetry.org/ | python -
+          export PATH="$HOME/.poetry/bin:$PATH"
+
+      - name: Install from poetry
+        run: poetry config virtualenvs.create true && poetry install
+
+      - name: Starting WaveAapp in backend
+        run: bash scripts/ci/backend.sh > /dev/null 2>&1 &
+
+      - name: Check WaveApp status code
+        run: make app-wait

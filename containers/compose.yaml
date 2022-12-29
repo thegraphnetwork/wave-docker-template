@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  waveapp:
+    hostname: waveapp
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    build:
+      context: ..
+      dockerfile: containers/Dockerfile
+      args:
+        # note: if you want to use a specific UID and GID, ensure to add it to
+        #       the .env file
+        - UID=${HOST_UID:-1000}
+        - GID=${HOST_GID:-1000}
+    user: "epigraphhub:epigraphhub"
+    entrypoint: [ "wave", "run", "--no-reload", "--no-autostart", "app.app" ]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10101"]
+      interval: 60s
+      timeout: 10s
+      retries: 5
+      start_period: 40s  # requires docker-compose 3.4
+    volumes:
+      - ..:/opt/services/waveapp
+    ports:
+      - 10101:10101
