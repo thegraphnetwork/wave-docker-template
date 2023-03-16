@@ -35,7 +35,7 @@ $ exit
 - mamba or conda
 
 ```
-$ mamba env create --file conda/local.yaml
+$ mamba env create --file conda/wave-base.yaml
 ```
 You can use conda instead of mamba `$ conda env create --file conda/env.yml`
 
@@ -56,7 +56,7 @@ You can see the app through localhost http://127.0.0.1:10101
 * Docker installed and running
 * Install make docker-compose with:
 ```bash
-$ mamba env create --file conda/containers.yaml
+$ mamba env create --file conda/wave-base.yaml
 ```
 
 Then:

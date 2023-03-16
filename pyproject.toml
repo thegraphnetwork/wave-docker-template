@@ -4,15 +4,15 @@ version = "0.1.0"
 description = "Dashboard quickstart template"
 authors = ["Flávio Codeço Coelho <fccoelho@gmail.com>"]
 license = "MIT"
-packages = [{include='app'}]
+packages = [{include='waveapp'}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-h2o-wave = "^0.23.1"
 pandas = "^1.5.0"
 psutil = "^5.9.2"
 loguru = "^0.6.0"
 typing-extensions = "^4.4.0"
+h2o-wave = "^0.25.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

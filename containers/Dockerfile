@@ -20,8 +20,8 @@ SHELL ["/bin/bash", "-c"]
 
 ENV ENV_NAME=waveapp
 ENV DEBIAN_FRONTEND=noninteractive
-ARG UID=1000
-ARG GID=1000
+ARG HOST_UID=1000
+ARG HOST_GID=1000
 
 RUN apt-get update -y \
   && apt-get install -y \
@@ -32,40 +32,37 @@ RUN apt-get update -y \
     /var/cache/apt/archives \
     /tmp/*
 
-RUN addgroup --gid ${GID} epigraphhub \
-  && useradd --uid ${UID} --gid ${GID} -ms /bin/bash epigraphhub \
+RUN addgroup --gid ${HOST_GID} epigraphhub \
+  && useradd --uid ${HOST_UID} --gid ${HOST_GID} -ms /bin/bash epigraphhub \
   && mkdir -p /opt/services \
   && chmod -R a+rwx /opt/conda /opt/services \
   && export ENV_NAME="$ENV_NAME" \
-  && chown epigraphhub:epigraphhub /opt/services
+  && chown -R ${HOST_GID}:${HOST_GID} /opt/services
 
+ENV PATH /opt/conda/envs/$ENV_NAME/bin:$PATH
+ENV PATH "$PATH:/home/epigraphhub/.local/bin"
+ENV PYTHONPATH='/opt/services/waveapp'
 
 USER epigraphhub
 
-COPY --chown=epigraphhub:epigraphhub ./conda/ /tmp/conda
-
-WORKDIR /opt/services/waveapp
-
-ENV PATH /opt/conda/envs/$ENV_NAME/bin:$PATH
-ENV PYTHONPATH='/opt/services/waveapp'
-
-RUN mamba env create -n $ENV_NAME --file /tmp/conda/containers.yaml \
-  && conda clean --all \
-  && find /opt/conda/ -type f,l -name '*.a' -delete \
-  && find /opt/conda/ -type f,l -name '*.pyc' -delete \
-  && find /opt/conda/ -type f,l -name '*.js.map' -delete \
-  && rm -rf /opt/conda/pkgs /tmp/*
-
-COPY --chown=epigraphhub:epigraphhub ./ /opt/services/waveapp/
-
-RUN poetry config virtualenvs.create false \
-  && poetry install
-
-COPY --chown=epigraphhub:epigraphhub containers/entrypoint.sh /opt/entrypoint.sh
+COPY --chown=${HOST_GID}:${HOST_GID} ./ /opt/services/waveapp/
+COPY --chown=${HOST_GID}:${HOST_GID} containers/entrypoint.sh /opt/entrypoint.sh
+COPY --chown=${HOST_GID}:${HOST_GID} conda/wave-base.yaml /tmp/containers.yaml
+COPY --chown=${HOST_GID}:${HOST_GID} containers/scripts/poetry-install.sh /opt/services/poetry-install.sh
+COPY --chown=${HOST_GID}:${HOST_GID} poetry.lock pyproject.toml /opt/services/
 
 RUN chmod +x /opt/entrypoint.sh \
   && echo "source /opt/entrypoint.sh" > ~/.bashrc
 
-ENTRYPOINT ["tini", "--", "/opt/entrypoint.sh"]
+RUN conda env create -n waveapp --file /tmp/containers.yaml
+  && conda clean --all \
+  && find /opt/conda/ -type f,l -name '*.a' -delete \
+  && find /opt/conda/ -type f,l -name '*.pyc' -delete \
+  && find /opt/conda/ -type f,l -name '*.js.map' -delete \
+  && rm -rf /home/airflow/.conda/pkgs
 
-#CMD ["wave run --no-reload --no-autostart app.app"]
+WORKDIR /opt/services/waveapp
+
+RUN bash /opt/services/poetry-install.sh
+
+ENTRYPOINT ["tini", "--", "/opt/entrypoint.sh"]

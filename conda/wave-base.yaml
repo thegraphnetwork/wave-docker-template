@@ -4,7 +4,6 @@ channels:
   - nodefaults
 dependencies:
   - docker-compose
-  - make
   - poetry
-  # - podman
-  # - podman-compose
+  # - pip:
+  #   - h2o-wave
