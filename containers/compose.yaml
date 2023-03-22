@@ -35,6 +35,9 @@ services:
       - 10101:10101
 
   nginx:
+    build:
+      context: ".."
+      dockerfile: containers/nginx/Dockerfile
     hostname: nginx
     image: nginx:latest
     restart: unless-stopped
