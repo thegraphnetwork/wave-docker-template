@@ -10,13 +10,9 @@ LABEL org.opencontainers.image.version="latest"
 LABEL org.opencontainers.image.description="EpiGraphHub"
 LABEL org.thegraphnetwork.epigraphhub.version="latest"
 
-# it is the default, but using it here to have it explicitly
 USER root
 
 SHELL ["/bin/bash", "-c"]
-# Use bash in Dockerfile RUN commands and make sure bashrc is sourced when
-# executing commands with /bin/bash -c
-# Needed to have the micromamba activate command configured etc.
 
 ENV ENV_NAME=waveapp
 ENV DEBIAN_FRONTEND=noninteractive
@@ -40,11 +36,23 @@ RUN addgroup --gid ${HOST_GID} epigraphhub \
   && chown -R ${HOST_GID}:${HOST_GID} /opt/services
 
 ENV PATH /opt/conda/envs/$ENV_NAME/bin:$PATH
-ENV PATH "$PATH:/home/epigraphhub/.local/bin"
+ENV PATH "$PATH:/opt/services/.local/bin"
 ENV PYTHONPATH='/opt/services/waveapp'
+
+# Install Wave
+ARG WAVE_VERSION="0.20.0"
+
+ENV WAVE_HOME="/opt/services/wave"
+RUN \
+    mkdir -p "${WAVE_HOME}" && \
+    curl -fsSL https://github.com/h2oai/wave/releases/download/v${WAVE_VERSION}/wave-${WAVE_VERSION}-linux-amd64.tar.gz | tar -C ${WAVE_HOME} -xzv 2>&1
+ENV WAVE_PATH="${WAVE_HOME}/wave-${WAVE_VERSION}-linux-amd64"
+
+WORKDIR /opt/services/
 
 USER epigraphhub
 
+# Copy app code
 COPY --chown=${HOST_GID}:${HOST_GID} ./ /opt/services/waveapp/
 COPY --chown=${HOST_GID}:${HOST_GID} containers/entrypoint.sh /opt/entrypoint.sh
 COPY --chown=${HOST_GID}:${HOST_GID} conda/wave-base.yaml /tmp/containers.yaml
@@ -54,14 +62,13 @@ COPY --chown=${HOST_GID}:${HOST_GID} poetry.lock pyproject.toml /opt/services/
 RUN chmod +x /opt/entrypoint.sh \
   && echo "source /opt/entrypoint.sh" > ~/.bashrc
 
-RUN conda env create -n waveapp --file /tmp/containers.yaml
+RUN conda env create -n waveapp --file /tmp/containers.yaml \
   && conda clean --all \
   && find /opt/conda/ -type f,l -name '*.a' -delete \
   && find /opt/conda/ -type f,l -name '*.pyc' -delete \
-  && find /opt/conda/ -type f,l -name '*.js.map' -delete \
-  && rm -rf /home/airflow/.conda/pkgs
+  && find /opt/conda/ -type f,l -name '*.js.map' -delete
 
-WORKDIR /opt/services/waveapp
+WORKDIR /opt/services/
 
 RUN bash /opt/services/poetry-install.sh
 

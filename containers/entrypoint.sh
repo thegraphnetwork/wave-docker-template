@@ -13,8 +13,10 @@ fi
 echo "[II] activate waveapp"
 source activate waveapp
 
-if [ $# -ne 0 ]
-  then
-    echo "Running: ${@}"
-    $(${@})
-fi
+export H2O_WAVE_ADDRESS="http://127.0.0.1:9999"
+
+(cd "${WAVE_PATH}" && ./waved -listen ":9999" &)
+
+sleep 3
+
+exec wave run --no-reload --no-autostart waveapp.app
