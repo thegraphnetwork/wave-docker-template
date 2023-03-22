@@ -53,14 +53,7 @@ WORKDIR /opt/services/
 USER epigraphhub
 
 # Copy app code
-COPY --chown=${HOST_GID}:${HOST_GID} ./ /opt/services/waveapp/
-COPY --chown=${HOST_GID}:${HOST_GID} containers/entrypoint.sh /opt/entrypoint.sh
 COPY --chown=${HOST_GID}:${HOST_GID} conda/wave-base.yaml /tmp/containers.yaml
-COPY --chown=${HOST_GID}:${HOST_GID} containers/scripts/poetry-install.sh /opt/services/poetry-install.sh
-COPY --chown=${HOST_GID}:${HOST_GID} poetry.lock pyproject.toml /opt/services/
-
-RUN chmod +x /opt/entrypoint.sh \
-  && echo "source /opt/entrypoint.sh" > ~/.bashrc
 
 RUN conda env create -n waveapp --file /tmp/containers.yaml \
   && conda clean --all \
@@ -70,6 +63,14 @@ RUN conda env create -n waveapp --file /tmp/containers.yaml \
 
 WORKDIR /opt/services/
 
+COPY --chown=${HOST_GID}:${HOST_GID} containers/scripts/poetry-install.sh /opt/services/poetry-install.sh
+COPY --chown=${HOST_GID}:${HOST_GID} poetry.lock pyproject.toml /opt/services/
 RUN bash /opt/services/poetry-install.sh
+
+COPY --chown=${HOST_GID}:${HOST_GID} ./ /opt/services/waveapp/
+
+COPY --chown=${HOST_GID}:${HOST_GID} containers/entrypoint.sh /opt/entrypoint.sh
+RUN chmod +x /opt/entrypoint.sh \
+  && echo "source /opt/entrypoint.sh" > ~/.bashrc
 
 ENTRYPOINT ["tini", "--", "/opt/entrypoint.sh"]

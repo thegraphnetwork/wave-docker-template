@@ -11,3 +11,4 @@ services:
         - GID=${HOST_GID:-1000}
     ports:
       - 10101:9999
+    command: "wave run --no-reload --no-autostart waveapp.app"

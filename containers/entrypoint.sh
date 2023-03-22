@@ -2,6 +2,10 @@
 
 set -ex
 
+if [ $# -eq 0 ]; then
+  exit 0
+fi
+
 # prepare the conda environment
 is_conda_in_path=$(echo $PATH|grep -m 1 --count /opt/conda/)
 
@@ -15,8 +19,9 @@ source activate waveapp
 
 export H2O_WAVE_ADDRESS="http://127.0.0.1:9999"
 
-(cd "${WAVE_PATH}" && ./waved -listen ":9999" &)
+(cd "${WAVE_PATH}" && ./waved -listen ":9999" &
 
 sleep 3
 
-exec wave run --no-reload --no-autostart waveapp.app
+echo "Running: ${@}"
+$("${@}")
