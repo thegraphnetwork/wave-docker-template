@@ -61,7 +61,7 @@ COPY --chown=epigraphhub:epigraphhub ./ /opt/services/waveapp/
 RUN poetry config virtualenvs.create false \
   && poetry install
 
-COPY --chown=epigraphhub:epigraphhub containers/entrypoint.sh /opt/entrypoint.sh
+COPY --chown=epigraphhub:epigraphhub containers/wave/entrypoint.sh /opt/entrypoint.sh
 
 RUN chmod +x /opt/entrypoint.sh \
   && echo "source /opt/entrypoint.sh" > ~/.bashrc

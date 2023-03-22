@@ -1,6 +1,13 @@
 version: '3.4'
 
 services:
+  home:
+    hostname: home
+    image: python:latest
+    ports:
+      - 8000:8000
+    command: python -m http.server
+
   waveapp:
     hostname: waveapp
     restart: unless-stopped
@@ -8,7 +15,7 @@ services:
       - ../.env
     build:
       context: ..
-      dockerfile: containers/Dockerfile
+      dockerfile: containers/wave/Dockerfile
       args:
         # note: if you want to use a specific UID and GID, ensure to add it to
         #       the .env file
@@ -26,3 +33,14 @@ services:
       - ..:/opt/services/waveapp
     ports:
       - 10101:10101
+
+  nginx:
+    hostname: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    user: "root:root"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/sites-enabled/default.conf
+    ports:
+      - 80:80
