@@ -30,14 +30,14 @@ RUN apt-get update -y \
 
 RUN addgroup --gid ${HOST_GID} epigraphhub \
   && useradd --uid ${HOST_UID} --gid ${HOST_GID} -ms /bin/bash epigraphhub \
-  && mkdir -p /opt/services \
+  && mkdir -p /opt/services/waveapp_pkg/waveapp \
   && chmod -R a+rwx /opt/conda /opt/services \
   && export ENV_NAME="$ENV_NAME" \
   && chown -R ${HOST_GID}:${HOST_GID} /opt/services
 
 ENV PATH /opt/conda/envs/$ENV_NAME/bin:$PATH
 ENV PATH "$PATH:/opt/services/.local/bin"
-ENV PYTHONPATH='/opt/services/waveapp'
+ENV PYTHONPATH='/opt/services/waveapp_pkg'
 
 # Install Wave
 ARG WAVE_VERSION="0.20.0"
@@ -48,11 +48,8 @@ RUN \
     curl -fsSL https://github.com/h2oai/wave/releases/download/v${WAVE_VERSION}/wave-${WAVE_VERSION}-linux-amd64.tar.gz | tar -C ${WAVE_HOME} -xzv 2>&1
 ENV WAVE_PATH="${WAVE_HOME}/wave-${WAVE_VERSION}-linux-amd64"
 
-WORKDIR /opt/services/
-
 USER epigraphhub
 
-# Copy app code
 COPY --chown=${HOST_GID}:${HOST_GID} conda/wave-base.yaml /tmp/containers.yaml
 
 RUN conda env create -n waveapp --file /tmp/containers.yaml \
@@ -61,13 +58,13 @@ RUN conda env create -n waveapp --file /tmp/containers.yaml \
   && find /opt/conda/ -type f,l -name '*.pyc' -delete \
   && find /opt/conda/ -type f,l -name '*.js.map' -delete
 
-WORKDIR /opt/services/
+WORKDIR /opt/services/waveapp_pkg/
 
-COPY --chown=${HOST_GID}:${HOST_GID} containers/scripts/poetry-install.sh /opt/services/poetry-install.sh
-COPY --chown=${HOST_GID}:${HOST_GID} poetry.lock pyproject.toml /opt/services/
-RUN bash /opt/services/poetry-install.sh
+COPY --chown=${HOST_GID}:${HOST_GID} waveapp /opt/services/waveapp_pkg/waveapp
 
-COPY --chown=${HOST_GID}:${HOST_GID} ./ /opt/services/waveapp/
+COPY --chown=${HOST_GID}:${HOST_GID} containers/scripts/poetry-install.sh /opt/services/waveapp_pkg/poetry-install.sh
+COPY --chown=${HOST_GID}:${HOST_GID} poetry.lock pyproject.toml /opt/services/waveapp_pkg/
+RUN bash /opt/services/waveapp_pkg/poetry-install.sh
 
 COPY --chown=${HOST_GID}:${HOST_GID} containers/entrypoint.sh /opt/entrypoint.sh
 RUN chmod +x /opt/entrypoint.sh \
