@@ -14,7 +14,7 @@ services:
     env_file:
       - ../.env
     environment:
-      - H2O_WAVE_BASE_URL=/monitor/
+      - H2O_WAVE_BASE_URL=/waveapp/
       # - H2O_WAVE_LISTEN=:10101
       # - H2O_APP_ADDRESS=http://waveapp:8000
       # - H2O_WAVE_ADDRESS=http://waveapp:10101
