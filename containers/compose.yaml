@@ -13,12 +13,15 @@ services:
     restart: unless-stopped
     env_file:
       - ../.env
+    environment:
+      - H2O_WAVE_BASE_URL=/monitor/
+      # - H2O_WAVE_LISTEN=:10101
+      # - H2O_APP_ADDRESS=http://waveapp:8000
+      # - H2O_WAVE_ADDRESS=http://waveapp:10101
     build:
       context: ..
       dockerfile: containers/wave/Dockerfile
       args:
-        # note: if you want to use a specific UID and GID, ensure to add it to
-        #       the .env file
         - UID=${HOST_UID:-1000}
         - GID=${HOST_GID:-1000}
     user: "epigraphhub:epigraphhub"

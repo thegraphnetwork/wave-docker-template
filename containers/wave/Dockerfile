@@ -49,7 +49,7 @@ WORKDIR /opt/services/waveapp
 ENV PATH /opt/conda/envs/$ENV_NAME/bin:$PATH
 ENV PYTHONPATH='/opt/services/waveapp'
 
-RUN mamba env create -n $ENV_NAME --file /tmp/conda/containers.yaml \
+RUN conda env create -n $ENV_NAME --file /tmp/conda/containers.yaml \
   && conda clean --all \
   && find /opt/conda/ -type f,l -name '*.a' -delete \
   && find /opt/conda/ -type f,l -name '*.pyc' -delete \

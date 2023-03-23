@@ -4,7 +4,7 @@ from loguru import logger
 from h2o_wave import site, ui, data, Q, main, app
 
 
-@app('/monitor', mode='broadcast')
+@app('/', mode='broadcast')
 async def serve(q: Q):
     create_layout(q)
     q.page['title'] = ui.header_card(
