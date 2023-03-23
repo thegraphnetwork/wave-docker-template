@@ -49,7 +49,7 @@ WORKDIR /opt/services/waveapp
 ENV PATH /opt/conda/envs/$ENV_NAME/bin:$PATH
 ENV PYTHONPATH='/opt/services/waveapp'
 
-RUN mamba env create -n $ENV_NAME --file /tmp/conda/containers.yaml \
+RUN conda env create -n $ENV_NAME --file /tmp/conda/containers.yaml \
   && conda clean --all \
   && find /opt/conda/ -type f,l -name '*.a' -delete \
   && find /opt/conda/ -type f,l -name '*.pyc' -delete \
@@ -61,7 +61,7 @@ COPY --chown=epigraphhub:epigraphhub ./ /opt/services/waveapp/
 RUN poetry config virtualenvs.create false \
   && poetry install
 
-COPY --chown=epigraphhub:epigraphhub containers/entrypoint.sh /opt/entrypoint.sh
+COPY --chown=epigraphhub:epigraphhub containers/wave/entrypoint.sh /opt/entrypoint.sh
 
 RUN chmod +x /opt/entrypoint.sh \
   && echo "source /opt/entrypoint.sh" > ~/.bashrc

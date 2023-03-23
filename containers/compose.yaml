@@ -1,23 +1,33 @@
 version: '3.4'
 
 services:
+  home:
+    hostname: home
+    image: python:latest
+    ports:
+      - 8000:8000
+    command: python -m http.server
+
   waveapp:
     hostname: waveapp
     restart: unless-stopped
     env_file:
       - ../.env
+    environment:
+      - H2O_WAVE_BASE_URL=/waveapp/
+      # - H2O_WAVE_LISTEN=:10101
+      # - H2O_APP_ADDRESS=http://waveapp:8000
+      # - H2O_WAVE_ADDRESS=http://waveapp:10101
     build:
       context: ..
-      dockerfile: containers/Dockerfile
+      dockerfile: containers/wave/Dockerfile
       args:
-        # note: if you want to use a specific UID and GID, ensure to add it to
-        #       the .env file
         - UID=${HOST_UID:-1000}
         - GID=${HOST_GID:-1000}
     user: "epigraphhub:epigraphhub"
     entrypoint: [ "wave", "run", "--no-reload", "--no-autostart", "app.app" ]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:10101"]
+      test: ["CMD", "curl", "-f", "http://localhost:10101/waveapp/"]
       interval: 60s
       timeout: 10s
       retries: 5
@@ -26,3 +36,17 @@ services:
       - ..:/opt/services/waveapp
     ports:
       - 10101:10101
+
+  nginx:
+    build:
+      context: ".."
+      dockerfile: containers/nginx/Dockerfile
+    hostname: nginx
+    image: nginx:latest
+    restart: unless-stopped
+    user: "root:root"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/sites-enabled/default.conf
+    ports:
+      - 80:80

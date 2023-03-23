@@ -83,3 +83,9 @@ containers-down:
 .PHONY:containers-reset-storage
 containers-reset-storage:
 	rm -rf ~/.local/share/containers/
+
+
+.PHONY:create-dotenv
+create-dotenv:
+	touch .env
+	echo -n "HOST_UID=`id -u`\nHOST_GID=`id -g`" > .env
